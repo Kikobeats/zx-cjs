@@ -1,0 +1,68 @@
+{
+  "name": "zx-cjs",
+  "description": "The zx module transpiled as dual CommonJS/ESM module",
+  "homepage": "https://nicedoc.io/Kikobeats/zx-cjs",
+  "version": "0.0.0",
+  "main": "index.js",
+  "author": {
+    "email": "josefrancisco.verdu@gmail.com",
+    "name": "Kiko Beats",
+    "url": "https://kikobeats.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kikobeats/zx-cjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Kikobeats/zx-cjs/issues"
+  },
+  "keywords": [
+    "cjs",
+    "esm",
+    "zx"
+  ],
+  "devDependencies": {
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
+    "esbuild": "latest",
+    "finepack": "latest",
+    "nano-staged": "latest",
+    "npm-check-updates": "latest",
+    "prettier-standard": "latest",
+    "simple-git-hooks": "latest",
+    "standard": "latest",
+    "standard-markdown": "latest"
+  },
+  "engines": {
+    "node": ">= 14"
+  },
+  "files": [
+    "scripts"
+  ],
+  "scripts": {
+    "build": "node scripts/build",
+    "clean": "rm -rf node_modules",
+    "lint": "standard-markdown README.md && standard"
+  },
+  "license": "Apache-2.0",
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "nano-staged": {
+    "*.js,!*.min.js,": [
+      "prettier-standard"
+    ],
+    "*.md": [
+      "standard-markdown"
+    ],
+    "package.json": [
+      "finepack"
+    ]
+  },
+  "simple-git-hooks": {
+    "commit-msg": "npx commitlint --edit",
+    "pre-commit": "npx nano-staged"
+  }
+}
