@@ -25,16 +25,28 @@ const buildFile = (filepath, cb) => {
 const files = Object.entries(modulePkg.exports)
 
 files.forEach(([key, value]) => {
-  const entryPoint = path.resolve(MODULE_PATH, value)
-  buildFile(entryPoint, () => {
-    const filename = value.replace('.mjs', '.js')
-    modulePkg.exports[key] = filename
-  })
+  if (typeof value === 'object') {
+    const importFile = value.import
+    const entryPoint = path.resolve(MODULE_PATH, importFile)
+    buildFile(entryPoint, () => {
+      const requireFile = path.basename(importFile).replace('.mjs', '.js')
+      modulePkg.exports[key] = {
+        require: requireFile,
+        types: path.basename(value.types)
+      }
+
+      fs.copyFileSync(
+        path.resolve(MODULE_PATH, value.types),
+        path.resolve(value.types)
+      )
+    })
+  }
 })
 
 modulePkg.name = pkg.name
 modulePkg.author = pkg.author
 modulePkg.repository = pkg.repository
+modulePkg.types = modulePkg.exports['.'].types
 
 delete modulePkg.files
 delete modulePkg.version
@@ -43,11 +55,6 @@ delete modulePkg.bin
 delete modulePkg.dependencies
 delete modulePkg.publishConfig
 delete modulePkg.scripts
-
-fs.copyFileSync(
-  path.resolve(MODULE_PATH, 'index.d.ts'),
-  path.resolve(OUT_DIR, 'index.d.ts')
-)
 
 fs.writeFileSync(
   path.resolve(OUT_DIR, 'package.json'),
