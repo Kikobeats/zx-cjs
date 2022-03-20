@@ -21,6 +21,9 @@
     "esm",
     "zx"
   ],
+  "dependencies": {
+    "zx": "6.0.6"
+  },
   "devDependencies": {
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",

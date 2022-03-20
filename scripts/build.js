@@ -31,9 +31,9 @@ files.forEach(([key, value]) => {
     buildFile(entryPoint, () => {
       const requireFile = path.basename(importFile).replace('.mjs', '.js')
       modulePkg.exports[key] = {
-        require: requireFile,
-        types: path.basename(value.types)
-      }
+        require: "./" + requireFile,
+        types: "./" + path.basename(value.types),
+      };
 
       fs.copyFileSync(
         path.resolve(MODULE_PATH, value.types),
