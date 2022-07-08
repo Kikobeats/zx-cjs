@@ -23,24 +23,19 @@ const buildFile = (filepath, cb) => {
 }
 
 const files = Object.entries(modulePkg.exports)
+files.forEach(([key, relativeFile]) => {
+  const absoluteFile = path.resolve(MODULE_PATH, relativeFile)
+  if (absoluteFile.endsWith('.json')) return
 
-files.forEach(([key, value]) => {
-  if (typeof value === 'object') {
-    const importFile = value.import
-    const entryPoint = path.resolve(MODULE_PATH, importFile)
-    buildFile(entryPoint, () => {
-      const requireFile = path.basename(importFile).replace('.mjs', '.js')
-      modulePkg.exports[key] = {
-        require: `./${requireFile}`,
-        types: `./${path.basename(value.types)}`
-      }
-
-      fs.copyFileSync(
-        path.resolve(MODULE_PATH, value.types),
-        path.resolve(value.types)
-      )
-    })
-  }
+  buildFile(absoluteFile, () => {
+    let exportFile = relativeFile
+    if (relativeFile.endsWith('.mjs')) {
+      exportFile = relativeFile.replace('.mjs', '.js')
+      const typeFile = absoluteFile.replace('.mjs', '.d.ts')
+      fs.copyFileSync(typeFile, path.resolve(OUT_DIR, path.basename(typeFile)))
+    }
+    modulePkg.exports[key] = exportFile
+  })
 })
 
 modulePkg.name = pkg.name
